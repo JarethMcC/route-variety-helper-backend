@@ -7,15 +7,12 @@ from functools import wraps
 from strava_client import get_strava_client
 from poi_service import get_pois_for_route
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 strava_api = get_strava_client()
-
-# --- Helpers & Decorators ---
 
 def auth_required(f):
     """Decorator to protect endpoints that require authentication."""
@@ -57,9 +54,6 @@ def create_gpx_string(activity_name: str, coords: list) -> str:
 </gpx>
 """
 
-
-# --- Authentication Endpoints ---
-
 @app.route("/auth/strava")
 def strava_auth():
     """Redirects user to Strava for authentication."""
@@ -98,9 +92,6 @@ def logout():
     """Logs the user out by clearing the session."""
     session.clear()
     return jsonify({"message": "Successfully logged out"}), 200
-
-
-# --- API Endpoints ---
 
 @app.route("/api/activities")
 @auth_required
