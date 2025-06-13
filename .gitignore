@@ -12,3 +12,12 @@ yarn-error.log*
 
 .env
 .env.example
+
+# Additional ignores for build artifacts and system files
+/dist
+/coverage
+/build
+/logs
+src/__pycache__
+.DS_Store
+.pyc

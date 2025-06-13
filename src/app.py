@@ -14,8 +14,6 @@ from poi_service import get_pois_for_route
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-load_dotenv()
-
 # Validate configuration
 try:
     Config.validate()
