@@ -69,6 +69,23 @@ def create_gpx_string(activity_name: str, coords: list) -> str:
 </gpx>
 """
 
+@app.route("/api/activities/<int:activity_id>/stream")
+@auth_required
+def get_activity_stream_data(activity_id):
+    """Fetches the lat/lng stream for a specific activity."""
+    access_token = session['strava_token']['access_token']
+    try:
+        latlng_stream = strava_api.get_activity_stream(activity_id, access_token)
+        if not latlng_stream:
+            return jsonify({"error": "No GPS data found for this activity"}), 404
+        
+        # The frontend expects [latitude, longitude], but the stream is [lat, lng]. It's already correct.
+        return jsonify({"stream": latlng_stream})
+    except StravaAPIError as e:
+        logger.error(f"Failed to fetch stream for activity {activity_id}: {e}")
+        return jsonify({"error": "Failed to fetch activity data"}), 500
+    
+
 @app.route("/auth/strava")
 def strava_auth():
     """Redirects user to Strava for authentication."""
