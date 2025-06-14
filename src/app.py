@@ -2,6 +2,7 @@ import logging
 import os
 import time
 from flask import Flask, request, jsonify, redirect, session, url_for
+from flask_cors import CORS
 from dotenv import load_dotenv
 from functools import wraps
 from typing import List, Dict
@@ -23,6 +24,13 @@ except ValueError as e:
 
 app = Flask(__name__)
 app.secret_key = Config.FLASK_SECRET_KEY
+
+# Configure CORS with credentials support
+CORS(app, 
+     origins=['http://localhost:3000'],  # Specific origin, not *
+     supports_credentials=True,          # Allow credentials
+     allow_headers=['Content-Type', 'Authorization'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
 strava_api = get_strava_client()
 
@@ -98,16 +106,17 @@ def strava_callback():
     code = request.args.get('code')
     if not code:
         logger.warning("Auth callback received without code")
-        return jsonify({"error": "Authorization code not provided"}), 400
+        # Redirect to frontend with error
+        return redirect("http://localhost:3000/activities?error=auth_failed")
 
     try:
         token_info = strava_api.exchange_code_for_token(code)
         session['strava_token'] = token_info
         logger.info("User successfully authenticated with Strava")
-        return redirect("http://localhost:5173/activities")
+        return redirect("http://localhost:3000/activities?auth=success")
     except StravaAPIError as e:
         logger.error(f"Authentication failed: {e}")
-        return jsonify({"error": "Authentication failed"}), 500
+        return redirect("http://localhost:3000/activities?error=auth_failed")
 
 
 @app.route("/auth/status")
