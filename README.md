@@ -1,5 +1,7 @@
 # Route Variety Helper Backend
 
+This project is a POC and never got uploaded anywhere, was fun to play with the Maps API.
+
 A Flask-based backend service that integrates with Strava and Google Maps APIs to help users discover points of interest (POIs) along their cycling and running routes.
 
 ## Features
